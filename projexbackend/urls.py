@@ -17,7 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.urls import path
 
+from rest_framework import routers
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^api/', include('rest_framework.urls'))
+    url(r'^api/v1/', include('api.urls')),
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/', include('rest_auth.registration.urls'))
 ]
