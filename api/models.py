@@ -14,15 +14,6 @@ def tasks_directory_path(instance):
     # file will be uploaded to MEDIA_ROOT/task_<id>/
     return 'task_{0}/'.format(instance.task.id)
 
-# Country(id, name)
-
-class Country(models.Model):
-    name = models.CharField(max_length = 30)
-    
-    def __str__(self):              # __unicode__ on Python 2
-        return self.name
-
-
 # Preferences (user_id, language, color_schema)
 
 class Preferences(models.Model):

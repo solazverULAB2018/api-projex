@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
     'notifications',
+    'django_countries'
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -68,7 +69,7 @@ ROOT_URLCONF = 'projexbackend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR + "/templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -148,11 +149,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'api/media')
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        'rest_framework.permissions.IsAuthenticated',
-
-    ],
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -170,10 +167,14 @@ REST_USE_JWT = True
 
 # Configure the JWTs to expire after 1 hour, and allow users to refresh near-expiration tokens
 JWT_AUTH = {
+    'JWT_VERIFY': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
     'JWT_ALLOW_REFRESH': True,
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+
 }
 
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username' # Allows Rest auth use username field
 ACCOUNT_AUTHENTICATION_METHOD = 'email' 
 
@@ -185,9 +186,6 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# REST_AUTH_SERIALIZERS = {
-#     "USER_DETAILS_SERIALIZER": "api.serializers.CustomUserDetailsSerializer",
-# }
 REST_AUTH_REGISTER_SERIALIZERS = {
     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
     "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"

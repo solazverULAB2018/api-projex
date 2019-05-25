@@ -10,7 +10,8 @@ from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
 from rest_framework_jwt.settings import api_settings
-
+from django_countries.serializers import CountryFieldMixin
+from django_countries.serializer_fields import CountryField
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -56,29 +57,36 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
             msg = _('Account with this email/username does not exists')
             raise serializers.ValidationError(msg)
 
-
-
-
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.CustomUser
-        fields = ('email', 'username', )
-
 class CustomLoginSerializer(LoginSerializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True,style={'input_type': 'password'})
 
     class Meta:
-        fields = ['email', 'password']
+        fields = ('email', 'password')
+
+    
+
+########################## USER SERIALIZER ###################################
+
+
+class UserSerializer(CountryFieldMixin, serializers.ModelSerializer):
+    class Meta:
+        model = models.CustomUser
+        fields = ('email', 'username', 'profile_photo', 'country' )
+
+
+
+
+###################### REGISTRATION SERIALIZER ##########################################
 
 class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=True, write_only=True)
-    password1 = serializers.CharField(required=True, write_only=True)
-    password2 = serializers.CharField(required=True, write_only=True)
+    password1 = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'})
+    password2 = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'})
     username = serializers.CharField(required=True, min_length=1, max_length=30,  write_only=True)
     profile_photo = serializers.ImageField(required=False)
+    country = CountryField()
+
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
@@ -102,6 +110,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             'email': self.validated_data.get('email', ''),
             'username': self.validated_data.get('username', ''),
             'profile_photo': self.validated_data.get('profile_photo', ''),
+            'country': self.validated_data.get('country', '')
         }
 
     def save(self, request):
