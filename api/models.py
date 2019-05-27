@@ -1,20 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import datetime
 from users.models import CustomUser
 
 # Create your models here.
 
 
-def project_directory_path(instance):
+def project_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/project_<id>/
-    return 'project_{0}/'.format(instance.project.id)
+    return 'project_{0}/{1}'.format(instance.id, filename)
 
-def tasks_directory_path(instance):
+
+def tasks_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/task_<id>/
-    return 'task_{0}/'.format(instance.task.id)
+    return 'task_{0}/{1}'.format(instance.id, filename)
 
 # Preferences (user_id, language, color_schema)
+
 
 class Preferences(models.Model):
     language = models.CharField(max_length=2)
@@ -26,47 +28,55 @@ class Preferences(models.Model):
 
 # Project(id, title, description, attachment_id, creator_id)
 
+
 class Project(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
-    project_photo = models.ImageField(upload_to=project_directory_path)
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="creator")
-    asignees = models.ManyToManyField(
+    project_photo = models.ImageField(
+        upload_to=project_directory_path, blank=True)
+    creator = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="creator")
+    assignees = models.ManyToManyField(
         CustomUser,
         through='UserProject',
         through_fields=('project', 'user'),
-        related_name="asignees"
+        related_name="assignees"
     )
 
 # Task(id, title, description, due_date, priority, attachment_id, project_id,, board_id)
 
+
 class Task(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
-    due_date = models.DateField(auto_now = False, auto_now_add = False )
+    due_date = models.DateField(auto_now=False, auto_now_add=False)
     priority = models.IntegerField()
-    task_file = models.FileField(upload_to=tasks_directory_path)
+    task_file = models.FileField(upload_to=tasks_directory_path, blank=True)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
     board = models.ForeignKey('Board', on_delete=models.CASCADE)
-    asigned_users = models.ManyToManyField(
+    assigned_users = models.ManyToManyField(
         CustomUser,
-        through='Asignees',
+        through='Assignees',
         through_fields=('task', 'user'),
-        related_name="asigned_users"
+        related_name="assigned_users"
     )
 
 # Assignees(user_id, task_id)
 
-class Asignees(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user")
+
+class Assignees(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="user")
     task = models.ForeignKey('Task', on_delete=models.CASCADE)
 
 # Board(id, title)
+
 
 class Board(models.Model):
     title = models.CharField(max_length=10)
 
 # Comment(id, text, task_id, creator_id)
+
 
 class Comment(models.Model):
     text = models.TextField()
@@ -74,6 +84,7 @@ class Comment(models.Model):
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 # Notification(id, type, text, notifier_id)
+
 
 class Notification(models.Model):
     notifier_type = models.CharField(max_length=10)
@@ -86,6 +97,7 @@ class Notification(models.Model):
 
 # UserProject(user_id, project_id, status, role)
 
+
 class UserProject(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
@@ -97,8 +109,7 @@ class UserProject(models.Model):
 
 # UserNotification(user_id, notification_id)
 
+
 class UserNotification(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     notification = models.ForeignKey('Notification', on_delete=models.CASCADE)
-
-

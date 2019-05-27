@@ -5,13 +5,13 @@ from rest_auth.serializers import LoginSerializer
 from allauth.utils import email_address_exists
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
-from . import models
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
 from rest_framework_jwt.settings import api_settings
 from django_countries.serializers import CountryFieldMixin
 from django_countries.serializer_fields import CountryField
+from . import models
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -19,16 +19,18 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
 
+
 class CustomJWTSerializer(JSONWebTokenSerializer):
     username_field = 'username_or_email'
 
     def validate(self, attrs):
 
         password = attrs.get("password")
-        user_obj = User.objects.filter(email=attrs.get("username_or_email")).first() or User.objects.filter(username=attrs.get("username_or_email")).first()
+        user_obj = User.objects.filter(email=attrs.get("username_or_email")).first(
+        ) or User.objects.filter(username=attrs.get("username_or_email")).first()
         if user_obj is not None:
             credentials = {
-                'username':user_obj.username,
+                'username': user_obj.username,
                 'password': password
             }
             if all(credentials.values()):
@@ -57,14 +59,15 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
             msg = _('Account with this email/username does not exists')
             raise serializers.ValidationError(msg)
 
+
 class CustomLoginSerializer(LoginSerializer):
     email = serializers.EmailField(required=True)
-    password = serializers.CharField(required=True,style={'input_type': 'password'})
+    password = serializers.CharField(
+        required=True, style={'input_type': 'password'})
 
     class Meta:
         fields = ('email', 'password')
 
-    
 
 ########################## USER SERIALIZER ###################################
 
@@ -72,21 +75,21 @@ class CustomLoginSerializer(LoginSerializer):
 class UserSerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta:
         model = models.CustomUser
-        fields = ('email', 'username', 'profile_photo', 'country' )
-
-
+        fields = ('id', 'email', 'username', 'profile_photo', 'country')
 
 
 ###################### REGISTRATION SERIALIZER ##########################################
 
 class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=True, write_only=True)
-    password1 = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'})
-    password2 = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'})
-    username = serializers.CharField(required=True, min_length=1, max_length=30,  write_only=True)
+    password1 = serializers.CharField(required=True, write_only=True, style={
+                                      'input_type': 'password'})
+    password2 = serializers.CharField(required=True, write_only=True, style={
+                                      'input_type': 'password'})
+    username = serializers.CharField(
+        required=True, min_length=1, max_length=30,  write_only=True)
     profile_photo = serializers.ImageField(required=False)
     country = CountryField()
-
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
