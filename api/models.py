@@ -35,12 +35,10 @@ class Project(models.Model):
     project_photo = models.ImageField(
         upload_to=project_directory_path, blank=True)
     creator = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="creator")
+        CustomUser, on_delete=models.CASCADE, related_name="project_creator")
     assignees = models.ManyToManyField(
         CustomUser,
-        through='UserProject',
-        through_fields=('project', 'user'),
-        related_name="assignees"
+        through='UserProject'
     )
 
 # Task(id, title, description, due_date, priority, attachment_id, project_id,, board_id)
@@ -56,9 +54,7 @@ class Task(models.Model):
     board = models.ForeignKey('Board', on_delete=models.CASCADE)
     assigned_users = models.ManyToManyField(
         CustomUser,
-        through='Assignees',
-        through_fields=('task', 'user'),
-        related_name="assigned_users"
+        through='Assignees'
     )
 
 # Assignees(user_id, task_id)
@@ -66,8 +62,8 @@ class Task(models.Model):
 
 class Assignees(models.Model):
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="user")
-    task = models.ForeignKey('Task', on_delete=models.CASCADE)
+        CustomUser, on_delete=models.CASCADE, related_name="user_to_task")
+    task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name="task_to_user")
 
 # Board(id, title)
 
@@ -99,13 +95,10 @@ class Notification(models.Model):
 
 
 class UserProject(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_to_project")
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="project_to_user")
     role = models.CharField(max_length=30)
     status = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.role
 
 # UserNotification(user_id, notification_id)
 
