@@ -1,6 +1,6 @@
 # Projex Application Programming Interface (API)
 
-[![Build Status](https://travis-ci.com/solazverULAB2018/api-projex.png?branch=master)](https://travis-ci.com/solazverULAB2018/api-projex)
+[![Build Status](https://travis-ci.com/solazverULAB2018/api-projex.svg?branch=master)](https://travis-ci.com/solazverULAB2018/api-projex)
 
 
 Application Programming Interface built under Django Rest Framework. It's used in ProjeX app.
