@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.com/solazverULAB2018/api-projex.svg?branch=master)](https://travis-ci.com/solazverULAB2018/api-projex)
 
 
-Application Programming Interface built under Django Rest Framework. It's used in ProjeX app.
+Application Programming Interface built under Django Rest Framework. It's used in ProjeX app. Tested and deployed using 
+[Travis CI framework](https://travis-ci.com/)
 
 ## Initial Requirements
 
@@ -17,38 +18,8 @@ Application Programming Interface built under Django Rest Framework. It's used i
 ### Run in development environment
 
 1. Open `settings.py` file.
-2. Change the following lines:
-
-``` python
-# settings.py
-# Change this
-
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'api-projex',
-	'USER': 'julio',
-	'PASSWORD': '12345678',
-	'HOST': 'localhost',
-	'PORT': '',
-    }
-}
-
-# to this
-
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'YOUR_POSTGRESQL_DATABASE',
-	'USER': 'YOUR_POSTGRESQL_USERNAME',
-	'PASSWORD': 'YOUR_POSTGRESQL_PASSWORD',
-	'HOST': 'localhost',
-	'PORT': '',
-    }
-}
-
-
-```
+2. Export `DJANGO_DB_NAME`, `DJANGO_USERNAME` and `DJANGO_PASSWORD` with your corresponding
+   PostgreSQL Database configuration.
 3. Go to `api-projex` folder.
 4. Activate virtual environment using `source virt-env/bin/activate`.
 5. Install all required packages using `pip install -r requirements.txt`.

@@ -91,9 +91,9 @@ WSGI_APPLICATION = 'projexbackend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'api-projex',
-	'USER': 'julio',
-	'PASSWORD': '12345678',
+        'NAME': os.environ['DJANGO_DB_NAME'],
+	'USER':  os.environ['DJANGO_USERNAME'],
+	'PASSWORD': os.environ['DJANGO_PASSWORD'],
 	'HOST': 'localhost',
 	'PORT': '',
     }
