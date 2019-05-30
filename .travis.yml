@@ -8,9 +8,11 @@ services:
 
 env:
   - DJANGO_VERSION=2.1.7
-  - DJANGO_DB_NAME=travis_ci_test
-  - DJANGO_USERNAME=postgres
-  - DJANGO_PASSWORD=''
+  
+before_install:
+  - export DJANGO_DB_NAME=travis_ci_test
+  - export DJANGO_USERNAME=postgres
+  - export DJANGO_PASSWORD=''
 install:
   - pip install -r requirements.txt
 
