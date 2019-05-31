@@ -90,6 +90,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         required=True, min_length=1, max_length=30,  write_only=True)
     profile_photo = serializers.ImageField(required=False)
     country = CountryField()
+    
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)

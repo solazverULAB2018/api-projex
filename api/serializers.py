@@ -1,11 +1,41 @@
 from rest_framework import serializers
 from users.models import CustomUser
-from api.models import Project, Task, UserProject
+from api.models import Project, Task, UserProject, Board, Preferences, Comment, Assignees
 from users.serializers import UserSerializer
 import pdb
 
+######################### FILTERS #############################################
+
+class UserFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    """
+    Queryset filter for current user
+    """
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        queryset = super(UserFilteredPrimaryKeyRelatedField, self).get_queryset()
+        if not request or not queryset:
+            return None
+        return queryset.filter(user=request.user)
+
+
+class UserFilteredByProjectPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    """
+    Queryset filter for current project
+    """
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        queryset = super(UserFilteredByProjectPrimaryKeyRelatedField, self).get_queryset()
+        if not request or not queryset:
+            return None
+        return queryset.filter(project=request.data.project)
+
+####################### MODELS SERIALIZERS ##########################################
+
 
 class UserProjectSerializer(serializers.ModelSerializer):
+    """
+    Intermediate model between user and project (known as membership)
+    """
     user = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.all())
     project = serializers.PrimaryKeyRelatedField(
@@ -13,10 +43,71 @@ class UserProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProject
-        fields = ('id','user', 'project', 'role', 'status')
+        fields = ('id', 'user', 'project', 'role', 'status')
 
+class AssigneesSerializer(serializers.ModelSerializer):
+    """
+    Assignees serializer (relationship between user and task)
+    """
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
+    task = serializers.PrimaryKeyRelatedField(
+        queryset=Task.objects.all(), required=False)
+
+    class Meta:
+        model = Assignees
+        fields = ('id', 'user', 'task')
+
+
+class BoardSerializer(serializers.ModelSerializer):
+    """
+    Tasks container serializer
+    """
+    project = serializers.PrimaryKeyRelatedField(
+        queryset=Project.objects.all())
+
+    class Meta:
+        model = Board
+        fields = ('id', 'title', 'project')
+
+class TaskSerializer(serializers.ModelSerializer):
+    """
+    Each task created for a project
+    """
+    board = serializers.PrimaryKeyRelatedField(
+        queryset=Board.objects.all())
+    task_to_user = AssigneesSerializer(many=True, required=False)
+
+    class Meta:
+        model = Task
+        fields = ('id', 'title', 'description', 'due_date', 'priority', 'task_file',
+        'board', 'task_to_user')
+
+    def create(self, validated_data):
+        users_data = validated_data.pop('task_to_user')
+        task = Project.objects.create(**validated_data)
+        for data in users_data:
+            UserProject.objects.create(task=task, **data)
+        return task
+
+class CommentSerializer(serializers.ModelSerializer):
+    """
+    Comments shown in task edit menu
+    """
+    creator = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
+    task = serializers.PrimaryKeyRelatedField(
+        queryset=Task.objects.all())
+
+    class Meta:
+        model=Comment
+        fields = ('id', 'text', 'task', 'creator')
 
 class ProjectSerializer(serializers.ModelSerializer):
+    """
+    Every project created by users. It uses a nested serializer to show
+    memberships
+    """
     creator = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.all())
     project_to_user = UserProjectSerializer(many=True, required=False)
@@ -33,6 +124,17 @@ class ProjectSerializer(serializers.ModelSerializer):
             UserProject.objects.create(project=project, **data)
         return project
 
+class PreferencesSerializer(serializers.ModelSerializer):
+    """
+    User preferences serializer
+    """
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all())
+
+    class Meta:
+        model = Preferences
+        fields = ('id', 'language', 'color_schema', 'user')
+
     ######## TODO UPDATE USING PROJECT VIEW ##############
 
 
@@ -43,10 +145,3 @@ class ProjectSerializer(serializers.ModelSerializer):
     #     for data in assignees_data:
     #         data.create_or_update(**users_data)
             
-
-class TaskSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Task
-        fields = ('id', 'title', 'description', 'due_date',
-                  'priority', 'task_file', 'project', 'board')
