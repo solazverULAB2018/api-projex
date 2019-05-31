@@ -18,11 +18,25 @@ Application Programming Interface built under Django Rest Framework. It's used i
 
 ### Run in development environment
 
-1. Open `settings.py` file.
-2. Export `DJANGO_DB_NAME`, `DJANGO_USERNAME` and `DJANGO_PASSWORD` with your corresponding
-   PostgreSQL Database configuration.
-3. Go to `api-projex` folder.
-4. Activate virtual environment using `source virt-env/bin/activate`.
-5. Install all required packages using `pip install -r requirements.txt`.
-6. Run migrations using `python manage.py migrate`.
-7. Start app using `python manage.py runserver`.
+1. Open `set-env` file and modify it as follows:
+
+    ``` shell
+        # Change this
+
+        source virt-env/bin/activate
+        export DJANGO_DB_NAME="api-projex"
+        export DJANGO_USERNAME="julio"
+        export DJANGO_PASSWORD="12345678"
+
+        # ..to this
+
+        source virt-env/bin/activate
+        export DJANGO_DB_NAME="YOUR DATABASE NAME"
+        export DJANGO_USERNAME="YOUR DATABASE USERNAME"
+        export DJANGO_PASSWORD="YOUR DATABASE PASSWORD"
+
+    ```
+2. Activate virtual environment and export environment variables using `source set-env`.
+3. Install all required packages using `pip install -r requirements.txt`.
+4. Run migrations using `python manage.py migrate`.
+5. Start app using `python manage.py runserver`.
