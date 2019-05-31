@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
     'notifications',
-    'django_countries'
+    'django_countries',
+    'rest_framework_swagger',
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
