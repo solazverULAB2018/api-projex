@@ -41,7 +41,7 @@ class Project(models.Model):
         through='UserProject'
     )
 
-# Task(id, title, description, due_date, priority, attachment_id, project_id,, board_id)
+# Task(id, title, description, due_date, priority, attachment_id, board_id)
 
 
 class Task(models.Model):
@@ -50,14 +50,13 @@ class Task(models.Model):
     due_date = models.DateField(auto_now=False, auto_now_add=False)
     priority = models.IntegerField()
     task_file = models.FileField(upload_to=tasks_directory_path, blank=True)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
     board = models.ForeignKey('Board', on_delete=models.CASCADE)
     assigned_users = models.ManyToManyField(
         CustomUser,
         through='Assignees'
     )
 
-# Assignees(user_id, task_id)
+# Assignees(user_id,  task_id)
 
 
 class Assignees(models.Model):
@@ -65,11 +64,12 @@ class Assignees(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name="user_to_task")
     task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name="task_to_user")
 
-# Board(id, title)
+# Board(id, title, project_id)
 
 
 class Board(models.Model):
     title = models.CharField(max_length=10)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
 
 # Comment(id, text, task_id, creator_id)
 
