@@ -30,9 +30,6 @@ STATICFILES_DIRS = (
 #  Add configuration for static files storage using whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,10 +48,13 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth',
     'rest_auth.registration',
-    'notifications',
     'django_countries',
     'rest_framework_swagger',
 ]
+
+# PUSH_NOTIFICATIONS_SETTINGS = {
+#     "FCM_API_KEY": "AIzaSyBvXHAMcynDo0biuZCaF2h8SglMSdeCyj4"
+# }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -193,7 +193,10 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+REST_AUTH_SERIALIZERS = {
     "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer"
 }

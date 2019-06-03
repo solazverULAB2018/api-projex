@@ -14,7 +14,7 @@ before_install:
   - export DJANGO_USERNAME=postgres
   - export DJANGO_PASSWORD=''
 install:
-  - pip install -r requirements.txt
+  - make freeze
 
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres

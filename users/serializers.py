@@ -61,13 +61,10 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
 
 
 class CustomLoginSerializer(LoginSerializer):
+    username = serializers.CharField(required=False, allow_blank=True)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(
         required=True, style={'input_type': 'password'})
-
-    class Meta:
-        fields = ('email', 'password')
-
 
 ########################## USER SERIALIZER ###################################
 

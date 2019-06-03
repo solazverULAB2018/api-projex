@@ -112,6 +112,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         queryset=CustomUser.objects.all())
     project_to_user = UserProjectSerializer(many=True, required=False)
 
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        user = request.user
+        print("This is my user: %s" % user.id)
+
+        return Project.objects.filter(creator=user)
+
     class Meta:
         model = Project
         fields = ('id', 'title', 'description',
