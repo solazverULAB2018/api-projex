@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from users.models import CustomUser
-from api.models import Project, Task, UserProject, Board, Preferences, Comment, Assignees
+from api.models import *
 from users.serializers import UserSerializer
 import pdb
 
@@ -152,3 +152,11 @@ class PreferencesSerializer(serializers.ModelSerializer):
     #     for data in assignees_data:
     #         data.create_or_update(**users_data)
             
+class NotificationSerializer(serializers.ModelSerializer):
+    """
+    Notifications serializer
+    """
+
+    class Meta:
+        model = Notification
+        fields = ('id', 'notifier_type', 'notifier')

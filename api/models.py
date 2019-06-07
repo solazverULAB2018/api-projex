@@ -81,9 +81,8 @@ class Comment(models.Model):
 
 # Notification(id, type, text, notifier_id)
 
-
 class Notification(models.Model):
-    notifier_type = models.CharField(max_length=10)
+    notifier_type = models.CharField(max_length=30)
     notifier = models.IntegerField()
     receivers = models.ManyToManyField(
         CustomUser,
@@ -104,5 +103,5 @@ class UserProject(models.Model):
 
 
 class UserNotification(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    notification = models.ForeignKey('Notification', on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_to_notification")
+    notification = models.ForeignKey('Notification', on_delete=models.CASCADE, related_name="notification_to_user")

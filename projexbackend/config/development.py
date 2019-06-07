@@ -1,4 +1,4 @@
-from projexbackend.config.common import *
+from projexbackend.config.settings import *
 import os
 
 

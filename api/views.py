@@ -54,6 +54,14 @@ class PreferencesViewSet(viewsets.ModelViewSet):
     """
     API Preferences views using DRF Viewsets
     """
-    queryset= Preferences.objects.all()
+    queryset = Preferences.objects.all()
     serializer_class = PreferencesSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    """
+    API Preferences views using DRF Viewsets
+    """
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
     permission_classes = (permissions.IsAuthenticated,)

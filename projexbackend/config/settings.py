@@ -33,6 +33,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +52,8 @@ INSTALLED_APPS = [
     'django_countries',
     'rest_framework_swagger',
 ]
+
+ASGI_APPLICATION = 'projexbackend.routing.application'
 
 # PUSH_NOTIFICATIONS_SETTINGS = {
 #     "FCM_API_KEY": "AIzaSyBvXHAMcynDo0biuZCaF2h8SglMSdeCyj4"
@@ -158,7 +161,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     'rest_framework.authentication.SessionAuthentication',
     'rest_framework.authentication.BasicAuthentication',
     ),
@@ -167,24 +169,12 @@ REST_FRAMEWORK = {
 }
 
 
-# Enables django-rest-auth to use JWT tokens instead of regular tokens.
-REST_USE_JWT = True
-
 # Custom User model added after Rest framework installation
 
-# Configure the JWTs to expire after 1 hour, and allow users to refresh near-expiration tokens
-JWT_AUTH = {
-    'JWT_VERIFY': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-
-}
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username' # Allows Rest auth use username field
 ACCOUNT_AUTHENTICATION_METHOD = 'email' 
-
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -193,8 +183,13 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
+AUTHENTICATION_BACKENDS = (
+   "django.contrib.auth.backends.ModelBackend",
+   "allauth.account.auth_backends.AuthenticationBackend"
+)
+
 REST_AUTH_SERIALIZERS = {
-    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
+     "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {

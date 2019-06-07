@@ -1,4 +1,4 @@
-from projexbackend.config.common import *
+from projexbackend.config.settings import *
 import os
 
 ############################ PRODUCTION SETTINGS ##################################
@@ -12,4 +12,3 @@ ALLOWED_HOSTS = ['projexbackend.herokuapp.com']
 import dj_database_url 
 prod_db  =  dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
-DEBUG = True

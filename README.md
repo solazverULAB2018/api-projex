@@ -18,7 +18,7 @@ Application Programming Interface built under Django Rest Framework. It's used i
 
 ### Run in development environment
 
-1. Open `set-env` file and modify it as follows:
+1. Open `set-env.sh` file and modify it as follows:
 
     ``` shell
         # Change this
@@ -38,9 +38,10 @@ Application Programming Interface built under Django Rest Framework. It's used i
         export DJANGO_PASSWORD="YOUR DATABASE PASSWORD"
         export SECRET_KEY='&o0ff+%&_th__u0!7uu82h6wsq)ac%bkh&81$+l#@77)01v)fk'
 
-
     ```
-2. Activate virtual environment and export environment variables using `source set-env.sh`.
-3. Install all required packages using `make freeze`.
-4. Run migrations using `python manage.py migrate`.
-5. Start app using `python manage.py runserver`.
+2. Set permissions to `set-env.sh` with `sudo chmod +777 set-env.sh`. In case you don't
+   have sudo, then just execute each script line manually in your terminal.
+3. Activate virtual environment and export environment variables using `source set-env.sh`.
+4. Install all required packages using `make freeze`.
+5. Run migrations using `python manage.py migrate`.
+6. Start app using `python manage.py runserver`.
