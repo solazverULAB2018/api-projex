@@ -3,16 +3,20 @@ from rest_framework import serializers
 from api.serializers import *
 import json
 
+
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         # We're always going to accept the connection, though we may
         # close it later based on other factors.
-
+        user = self.scope.get('user')
+        group_name = user.get_group_name
+        await self.channel_layer.group_add(
+            group_name,
+            self.channel_name,
+        )
         await self.accept()
 
     async def notify(self, event):
-
-
         """
         This handles calls elsewhere in this codebase that look
         like:
@@ -25,8 +29,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         Don't try to directly use send_json or anything; this
         decoupling will help you as things grow.
         """
-        await self.send_json(event["content"])
 
+        await self.send_json(event["payload"])
 
     async def receive_json(self, content, **kwargs):
         """
@@ -59,6 +63,3 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': 'Hello, World!'
         }))
-
-    def get_serializer(self, *, data):
-         return serializers.ModelSerializer()

@@ -10,12 +10,12 @@ class UserProjectViewSet(viewsets.ModelViewSet):
     serializer_class = UserProjectSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-class AssigneesViewSet(viewsets.ModelViewSet):
+class AssigneeViewSet(viewsets.ModelViewSet):
     """
-    API Assignees views
+    API Assignee views
     """
-    queryset = Assignees.objects.all()
-    serializer_class= AssigneesSerializer
+    queryset = Assignee.objects.all()
+    serializer_class= AssigneeSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -25,6 +25,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Project.objects.filter(creator=user)
 
 class TaskViewSet(viewsets.ModelViewSet):
     """

@@ -19,7 +19,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 
 PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
-STATIC_ROOT =   os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
 # Extra lookup directories for collectstatic to find static files
@@ -54,6 +54,15 @@ INSTALLED_APPS = [
 ]
 
 ASGI_APPLICATION = 'projexbackend.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # PUSH_NOTIFICATIONS_SETTINGS = {
 #     "FCM_API_KEY": "AIzaSyBvXHAMcynDo0biuZCaF2h8SglMSdeCyj4"
@@ -102,10 +111,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ['DJANGO_DB_NAME'],
-	'USER':  os.environ['DJANGO_USERNAME'],
-	'PASSWORD': os.environ['DJANGO_PASSWORD'],
-	'HOST': 'localhost',
-	'PORT': '',
+        'USER':  os.environ['DJANGO_USERNAME'],
+        'PASSWORD': os.environ['DJANGO_PASSWORD'],
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -161,8 +170,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework.authentication.SessionAuthentication',
-    'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 
@@ -173,8 +182,9 @@ REST_FRAMEWORK = {
 
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username' # Allows Rest auth use username field
-ACCOUNT_AUTHENTICATION_METHOD = 'email' 
+# Allows Rest auth use username field
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -184,12 +194,12 @@ ACCOUNT_LOGOUT_ON_GET = True
 AUTH_USER_MODEL = 'users.CustomUser'
 
 AUTHENTICATION_BACKENDS = (
-   "django.contrib.auth.backends.ModelBackend",
-   "allauth.account.auth_backends.AuthenticationBackend"
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend"
 )
 
 REST_AUTH_SERIALIZERS = {
-     "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {

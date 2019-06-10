@@ -10,14 +10,9 @@ from .consumers import NotificationConsumer
 
 websockets = URLRouter([
     path(
-        "ws/notifications/projects/<int:project-id>",
+        "ws/notifications",
         NotificationConsumer,
-        name="ws_notifications_project",
-    ),
-    path(
-        "ws/notifications/tasks/<int:task-id>",
-        NotificationConsumer,
-        name="ws_notifications_tasks",
+        name="ws_notifications",
     )
 ])
 

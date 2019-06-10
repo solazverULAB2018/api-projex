@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Assignees',
+            name='Assignee',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
             ],
@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 ('due_date', models.DateField()),
                 ('priority', models.IntegerField()),
                 ('task_file', models.FileField(blank=True, upload_to=api.models.tasks_directory_path)),
-                ('assigned_users', models.ManyToManyField(through='api.Assignees', to=settings.AUTH_USER_MODEL)),
+                ('assigned_users', models.ManyToManyField(through='api.Assignee', to=settings.AUTH_USER_MODEL)),
                 ('board', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.Board')),
                 ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.Project')),
             ],
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='project',
-            name='assignees',
+            name='assignee',
             field=models.ManyToManyField(through='api.UserProject', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
@@ -115,12 +115,12 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.Task'),
         ),
         migrations.AddField(
-            model_name='assignees',
+            model_name='assignee',
             name='task',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='task_to_user', to='api.Task'),
         ),
         migrations.AddField(
-            model_name='assignees',
+            model_name='assignee',
             name='user',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_to_task', to=settings.AUTH_USER_MODEL),
         ),

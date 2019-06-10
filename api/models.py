@@ -36,7 +36,7 @@ class Project(models.Model):
         upload_to=project_directory_path, blank=True)
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="project_creator")
-    assignees = models.ManyToManyField(
+    assignee = models.ManyToManyField(
         CustomUser,
         through='UserProject'
     )
@@ -53,16 +53,17 @@ class Task(models.Model):
     board = models.ForeignKey('Board', on_delete=models.CASCADE)
     assigned_users = models.ManyToManyField(
         CustomUser,
-        through='Assignees'
+        through='Assignee'
     )
 
-# Assignees(user_id,  task_id)
+# Assignee(user_id,  task_id)
 
 
-class Assignees(models.Model):
+class Assignee(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="user_to_task")
-    task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name="task_to_user")
+    task = models.ForeignKey(
+        'Task', on_delete=models.CASCADE, related_name="task_to_user")
 
 # Board(id, title, project_id)
 
@@ -81,6 +82,7 @@ class Comment(models.Model):
 
 # Notification(id, type, text, notifier_id)
 
+
 class Notification(models.Model):
     notifier_type = models.CharField(max_length=30)
     notifier = models.IntegerField()
@@ -94,8 +96,10 @@ class Notification(models.Model):
 
 
 class UserProject(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_to_project")
-    project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name="project_to_user")
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="user_to_project")
+    project = models.ForeignKey(
+        'Project', on_delete=models.CASCADE, related_name="project_to_user")
     role = models.CharField(max_length=30)
     status = models.CharField(max_length=10)
 
@@ -103,5 +107,7 @@ class UserProject(models.Model):
 
 
 class UserNotification(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_to_notification")
-    notification = models.ForeignKey('Notification', on_delete=models.CASCADE, related_name="notification_to_user")
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="user_to_notification")
+    notification = models.ForeignKey(
+        'Notification', on_delete=models.CASCADE, related_name="notification_to_user")

@@ -45,9 +45,9 @@ class UserProjectSerializer(serializers.ModelSerializer):
         model = UserProject
         fields = ('id', 'user', 'project', 'role', 'status')
 
-class AssigneesSerializer(serializers.ModelSerializer):
+class AssigneeSerializer(serializers.ModelSerializer):
     """
-    Assignees serializer (relationship between user and task)
+    Assignee serializer (relationship between user and task)
     """
     user = serializers.PrimaryKeyRelatedField(
         queryset=CustomUser.objects.all())
@@ -55,7 +55,7 @@ class AssigneesSerializer(serializers.ModelSerializer):
         queryset=Task.objects.all(), required=False)
 
     class Meta:
-        model = Assignees
+        model = Assignee
         fields = ('id', 'user', 'task')
 
 
@@ -76,7 +76,7 @@ class TaskSerializer(serializers.ModelSerializer):
     """
     board = serializers.PrimaryKeyRelatedField(
         queryset=Board.objects.all())
-    task_to_user = AssigneesSerializer(many=True, required=False)
+    task_to_user = AssigneeSerializer(many=True, required=False)
 
     class Meta:
         model = Task
@@ -84,7 +84,10 @@ class TaskSerializer(serializers.ModelSerializer):
         'board', 'task_to_user')
 
     def create(self, validated_data):
-        users_data = validated_data.pop('task_to_user')
+        try:
+            users_data = validated_data.pop('task_to_user')
+        except KeyError as k:
+            users_data = {}
         task = Project.objects.create(**validated_data)
         for data in users_data:
             UserProject.objects.create(task=task, **data)
@@ -112,20 +115,17 @@ class ProjectSerializer(serializers.ModelSerializer):
         queryset=CustomUser.objects.all())
     project_to_user = UserProjectSerializer(many=True, required=False)
 
-    def get_queryset(self):
-        request = self.context.get('request', None)
-        user = request.user
-        print("This is my user: %s" % user.id)
-
-        return Project.objects.filter(creator=user)
-
     class Meta:
         model = Project
         fields = ('id', 'title', 'description',
                   'project_photo', 'creator', 'project_to_user')
 
     def create(self, validated_data):
-        users_data = validated_data.pop('project_to_user')
+        try:
+            users_data = validated_data.pop('project_to_user')
+        except KeyError as k:
+            users_data = {}
+
         project = Project.objects.create(**validated_data)
         for data in users_data:
             UserProject.objects.create(project=project, **data)
@@ -147,9 +147,9 @@ class PreferencesSerializer(serializers.ModelSerializer):
 
     # def update(self, instance, validated_data):
     #     users_data = validated_data.pop('project_to_user')
-    #     assignees_data = UserProject.objects.get(project=instance)
+    #     assignee_data = UserProject.objects.get(project=instance)
     #     instance.update(**validated_data)
-    #     for data in assignees_data:
+    #     for data in assignee_data:
     #         data.create_or_update(**users_data)
             
 class NotificationSerializer(serializers.ModelSerializer):
