@@ -10,13 +10,22 @@ class UserProjectViewSet(viewsets.ModelViewSet):
     serializer_class = UserProjectSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        user = self.request.user
+        return UserProject.objects.filter(user=user)
+
 class AssigneeViewSet(viewsets.ModelViewSet):
     """
     API Assignee views
     """
     queryset = Assignee.objects.all()
-    serializer_class= AssigneeSerializer
+    serializer_class = AssigneeSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        task_id = self.request.query_params.get('task')
+        task = Task.objects.get(pk=task_id)
+        return Assignee.objects.filter(task=task)
 
 class ProjectViewSet(viewsets.ModelViewSet):
     """
@@ -28,7 +37,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Project.objects.filter(creator=user)
+        projects = Project.objects.filter(creator=user)
+        memberships = UserProject.objects.filter(user=user)
+        for instance in memberships:
+            project = instance.get('project')
+            projects.append(Project.objects.get(pk=project.id))
+        return projects
 
 class TaskViewSet(viewsets.ModelViewSet):
     """
@@ -37,6 +51,11 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        board_id = self.request.query_params.get('board')
+        board = Board.objects.get(pk=board_id)
+        return Task.objects.filter(board=board)
 
 class CommentViewSet(viewsets.ModelViewSet):
     """
@@ -62,6 +81,10 @@ class PreferencesViewSet(viewsets.ModelViewSet):
     serializer_class = PreferencesSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        user = self.request.user
+        return Preferences.objects.get(pk=user)
+
 class NotificationViewSet(viewsets.ModelViewSet):
     """
     API Preferences views using DRF Viewsets
@@ -69,3 +92,10 @@ class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        notifications = []
+        user_notifications = UserNotification.objects(user=user)
+        for notif in user_notifications:
+            notifications.append(Notification.objects.get(pk=notif.notification))
