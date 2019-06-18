@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions
 from api.models import *
 from api.serializers import *
 
+
 class UserProjectViewSet(viewsets.ModelViewSet):
     """
     API UserProjects memberships views
@@ -14,6 +15,7 @@ class UserProjectViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return UserProject.objects.filter(user=user)
 
+
 class AssigneeViewSet(viewsets.ModelViewSet):
     """
     API Assignee views
@@ -24,8 +26,12 @@ class AssigneeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         task_id = self.request.query_params.get('task')
-        task = Task.objects.get(pk=task_id)
+        try:
+            task = Task.objects.get(pk=task_id)
+        except:
+            return []
         return Assignee.objects.filter(task=task)
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     """
@@ -44,6 +50,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             projects.append(Project.objects.get(pk=project.id))
         return projects
 
+
 class TaskViewSet(viewsets.ModelViewSet):
     """
     API Tasks views using DRF Viewsets
@@ -54,8 +61,13 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         board_id = self.request.query_params.get('board')
-        board = Board.objects.get(pk=board_id)
+        try:
+            board = Board.objects.get(pk=board_id)
+        except:
+            return []
+
         return Task.objects.filter(board=board)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     """
@@ -65,6 +77,16 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        task_id = self.request.query_params.get('task')
+        try:
+            task = Task.objects.get(pk=task_id)
+        except:
+            return []
+
+        return Comment.objects.filter(task=task)
+
+
 class BoardViewSet(viewsets.ModelViewSet):
     """
     API Board views using DRF Viewsets
@@ -72,6 +94,16 @@ class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        project_id = self.request.query_params.get('project')
+        try:
+            project = Project.objects.get(pk=project_id)
+        except:
+            return []
+
+        return Board.objects.filter(project=project)
+
 
 class PreferencesViewSet(viewsets.ModelViewSet):
     """
@@ -84,6 +116,7 @@ class PreferencesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Preferences.objects.get(pk=user)
+
 
 class NotificationViewSet(viewsets.ModelViewSet):
     """
@@ -98,4 +131,5 @@ class NotificationViewSet(viewsets.ModelViewSet):
         notifications = []
         user_notifications = UserNotification.objects(user=user)
         for notif in user_notifications:
-            notifications.append(Notification.objects.get(pk=notif.notification))
+            notifications.append(
+                Notification.objects.get(pk=notif.notification))
