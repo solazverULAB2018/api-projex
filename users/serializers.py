@@ -31,7 +31,7 @@ class UserSerializer(CountryFieldMixin, serializers.ModelSerializer):
 
 ###################### REGISTRATION SERIALIZER ##########################################
 
-class CustomRegisterSerializer(RegisterSerializer):
+class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
     """
     Registration serializer
     """
@@ -42,8 +42,11 @@ class CustomRegisterSerializer(RegisterSerializer):
                                       'input_type': 'password'})
     username = serializers.CharField(
         required=True, min_length=1, max_length=30,  write_only=True)
-    profile_photo = serializers.ImageField(required=False)
-    country = CountryField()
+    profile_photo = serializers.ImageField(required=False,  write_only=True)
+    country = CountryField(required=True, write_only=True)
+
+    def validate_country(self, data):
+        return data
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
@@ -76,5 +79,10 @@ class CustomRegisterSerializer(RegisterSerializer):
         self.cleaned_data = self.get_cleaned_data()
         adapter.save_user(request, user, self)
         setup_user_email(request, user, [])
+
+        ## User extra data assignation
+        user.profile_photo = request.data['profile_photo']
+        user.country = self.cleaned_data['country']
+
         user.save()
         return user
