@@ -81,7 +81,7 @@ class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
         setup_user_email(request, user, [])
 
         ## User extra data assignation
-        user.profile_photo = request.data['profile_photo']
+        user.profile_photo = self.cleaned_data['profile_photo']
         user.country = self.cleaned_data['country']
 
         user.save()
