@@ -65,10 +65,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-# PUSH_NOTIFICATIONS_SETTINGS = {
-#     "FCM_API_KEY": "AIzaSyBvXHAMcynDo0biuZCaF2h8SglMSdeCyj4"
-# }
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SITE_ID = 1
@@ -174,6 +170,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -203,7 +200,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 REST_AUTH_SERIALIZERS = {
-    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
+    'TOKEN_SERIALIZER': 'users.serializers.CustomTokenSerializer',
+
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
