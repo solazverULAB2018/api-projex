@@ -44,4 +44,5 @@ Application Programming Interface built under Django Rest Framework. It's used i
 3. Activate virtual environment and export environment variables using `source set-env.sh`.
 4. Install all required packages using `make freeze`.
 5. Run migrations using `python manage.py migrate`.
-6. Start app using `python manage.py runserver`.
+6. Run the testing `python manage.py test -v 2`.
+7. Start app using `python manage.py runserver`.
