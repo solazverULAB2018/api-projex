@@ -16,4 +16,5 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='Get Current User')
     def current_user(self, params):
         user = serializers.UserSerializer(self.request.user)
+        
         return Response(user.data)

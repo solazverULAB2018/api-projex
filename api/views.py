@@ -115,7 +115,7 @@ class PreferencesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Preferences.objects.get(pk=user)
+        return Preferences.objects.filter(id=user.id)
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -129,7 +129,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         notifications = []
-        user_notifications = UserNotification.objects(user=user)
+        user_notifications = UserNotification.objects.filter(user=user)
         for notif in user_notifications:
             notifications.append(
-                Notification.objects.get(pk=notif.notification))
+                Notification.objects.get(id=notif.notification.id))
+        return user_notifications
