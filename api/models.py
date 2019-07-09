@@ -33,7 +33,7 @@ class Project(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
     project_photo = models.ImageField(
-        upload_to=project_directory_path, blank=True)
+        upload_to=project_directory_path, blank=True, null=True)
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="project_creator")
     assignee = models.ManyToManyField(

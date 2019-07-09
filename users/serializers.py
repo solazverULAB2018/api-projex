@@ -13,6 +13,7 @@ from . import models
 
 User = get_user_model()
 
+
 class CustomLoginSerializer(LoginSerializer):
     username = serializers.CharField(required=False, allow_blank=True)
     email = serializers.EmailField(required=True)
@@ -30,7 +31,10 @@ class UserSerializer(CountryFieldMixin, serializers.ModelSerializer):
 
 ###################### REGISTRATION SERIALIZER ##########################################
 
-class CustomRegisterSerializer(RegisterSerializer):
+class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
+    """
+    Registration serializer
+    """
     email = serializers.EmailField(required=True, write_only=True)
     password1 = serializers.CharField(required=True, write_only=True, style={
                                       'input_type': 'password'})
@@ -38,9 +42,11 @@ class CustomRegisterSerializer(RegisterSerializer):
                                       'input_type': 'password'})
     username = serializers.CharField(
         required=True, min_length=1, max_length=30,  write_only=True)
-    profile_photo = serializers.ImageField(required=False)
-    country = CountryField()
-    
+    profile_photo = serializers.ImageField(required=False,  write_only=True)
+    country = CountryField(required=True, write_only=True)
+
+    def validate_country(self, data):
+        return data
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
@@ -63,7 +69,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             'password1': self.validated_data.get('password1', ''),
             'email': self.validated_data.get('email', ''),
             'username': self.validated_data.get('username', ''),
-            'profile_photo': self.validated_data.get('profile_photo', ''),
+            'profile_photo': self.validated_data.get('profile_photo', None),
             'country': self.validated_data.get('country', '')
         }
 
@@ -73,5 +79,11 @@ class CustomRegisterSerializer(RegisterSerializer):
         self.cleaned_data = self.get_cleaned_data()
         adapter.save_user(request, user, self)
         setup_user_email(request, user, [])
+
+        ## User extra data assignation
+        user.profile_photo = request.data['profile_photo'] if \
+                    'profile_photo' in request.data.keys() else None
+        user.country = self.cleaned_data['country']
+
         user.save()
         return user
