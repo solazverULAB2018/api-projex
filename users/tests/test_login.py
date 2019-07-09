@@ -1,18 +1,11 @@
 import json
 
-from io import StringIO
-from unittest.mock import patch
-
-from django.contrib.auth.models import User
-from django.urls import reverse
-
 from rest_framework.test import APITestCase
 
 from users.models import CustomUser
 
 
 class UserLoginAPIViewTestCase(APITestCase):
-    #url = reverse("users:list")
     url = '/api/v1/rest-auth/%s/'
     username = "testuser"
     email = "test@testuser.com"
@@ -37,7 +30,7 @@ class UserLoginAPIViewTestCase(APITestCase):
 
     def test_authentication_with_valid_username(self):
         """
-        Test to verify a token post call with just username
+        Test to verify an authentication with just username
         """
         data = {
             "username": self.username,
@@ -49,7 +42,7 @@ class UserLoginAPIViewTestCase(APITestCase):
 
     def test_authentication_with_valid_email(self):
         """
-        Test to verify a token post call with just email
+        Test to verify an authentication with just email
         """
         data = {
             "email":    self.email,

@@ -30,7 +30,7 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         response = self.client.post(self.url, data, format='json')
         print(response.status_code, response.content)
         self.assertEqual(400, response.status_code)
-        self.assertTrue("password1" in json.loads(response.content))
+        self.assertTrue("non_field_errors" in json.loads(response.content))
 
     def test_invalid_password_short(self):
         """
