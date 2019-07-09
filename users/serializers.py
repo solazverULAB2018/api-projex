@@ -14,12 +14,14 @@ from . import models
 
 User = get_user_model()
 
+
 class CustomTokenSerializer(serializers.ModelSerializer):
     token = serializers.CharField(source='key')
 
     class Meta:
         model = TokenModel
         fields = ('token',)
+
 
 class CustomLoginSerializer(LoginSerializer):
     username = serializers.CharField(required=False, allow_blank=True)
@@ -87,9 +89,16 @@ class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
         adapter.save_user(request, user, self)
         setup_user_email(request, user, [])
 
-        ## User extra data assignation
-        user.profile_photo = request.data['profile_photo']
-        user.country = self.cleaned_data['country']
+        # User extra data
+        try:
+            user.profile_photo = request.data['profile_photo']
+        except KeyError as k:
+            pass
+
+        try:
+            user.country = self.cleaned_data['country']
+        except KeyError as k:
+            pass
 
         user.save()
         return user
