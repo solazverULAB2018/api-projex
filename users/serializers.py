@@ -95,10 +95,7 @@ class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
         except KeyError as k:
             pass
 
-        try:
-            user.country = self.cleaned_data['country']
-        except KeyError as k:
-            pass
+        user.country = self.cleaned_data['country']
 
         user.save()
         return user

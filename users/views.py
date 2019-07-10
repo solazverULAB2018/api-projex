@@ -16,5 +16,19 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='Get Current User')
     def current_user(self, params):
         user = serializers.UserSerializer(self.request.user)
-        
+
         return Response(user.data)
+
+    @action(detail=False, methods=['GET'], name='Get User by Email')
+    def user_by_email(self, params):
+        email = self.request.query_params.get('email', None)
+
+        if email is not None:
+            try:
+                result = CustomUser.objects.get(email=email)
+                user = serializers.UserSerializer(result)
+                return Response(user.data)
+            except (KeyError, Exception):
+                pass
+
+        return Response("Not found")
