@@ -1,25 +1,25 @@
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.generic.websocket import JsonWebsocketConsumer
 from rest_framework import serializers
 from api.serializers import *
+from asgiref.sync import async_to_sync
 import json
 
 
-class NotificationConsumer(AsyncJsonWebsocketConsumer):
-    async def connect(self):
+class NotificationConsumer(JsonWebsocketConsumer):
+    def connect(self):
         # We're always going to accept the connection, though we may
         # close it later based on other factors.
         user = self.scope.get('user')
         group_name = user.get_group_name
 
-        print("Hola mundo:  " + group_name)
-
-        await self.channel_layer.group_add(
+        async_to_sync(self.channel_layer.group_add(
             group_name,
             self.channel_name,
-        )
-        await self.accept()
+        ))
 
-    async def notify(self, event):
+        self.accept()
+
+    def notify(self, event):
         """
         This handles calls elsewhere in this codebase that look
         like:
@@ -33,9 +33,9 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         decoupling will help you as things grow.
         """
 
-        await self.send_json(event["payload"])
+        self.send_json(event["payload"])
 
-    async def receive_json(self, content, **kwargs):
+    def websocket_receive(self, content, **kwargs):
         """
         This handles data sent over the wire from the client.
 
@@ -47,7 +47,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         the use of channels.auth.AuthMiddlewareStack in routing) is
         allowed to subscribe to the requested object.
         """
-
+        print(content)
         # serializer = self.get_serializer(data=content)
         # if not serializer.is_valid():
         #     return
@@ -63,9 +63,5 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         #     self.channel_name,
         # )
 
-        self.send(text_data=json.dumps({
-            'message': 'Hello, World!'
-        }))
-
-    async def websocket_disconnect(self):
+    def websocket_disconnect(self):
         super(self)
