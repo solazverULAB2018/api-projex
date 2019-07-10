@@ -95,9 +95,9 @@ class TaskSerializer(serializers.ModelSerializer):
             users_data = validated_data.pop('task_to_user')
         except KeyError as k:
             users_data = {}
-        task = Project.objects.create(**validated_data)
+        task = Task.objects.create(**validated_data)
         for data in users_data:
-            UserProject.objects.create(task=task, **data)
+            Assignee.objects.create(task=task, **data)
         return task
 
 
