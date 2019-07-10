@@ -10,6 +10,9 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         # close it later based on other factors.
         user = self.scope.get('user')
         group_name = user.get_group_name
+
+        print("Hola mundo:  " + group_name)
+
         await self.channel_layer.group_add(
             group_name,
             self.channel_name,
@@ -63,3 +66,6 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': 'Hello, World!'
         }))
+
+    async def websocket_disconnect(self):
+        super(self)
