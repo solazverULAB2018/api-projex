@@ -9,9 +9,18 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
 from django_countries.serializers import CountryFieldMixin
 from django_countries.serializer_fields import CountryField
+from rest_auth.models import TokenModel
 from . import models
 
 User = get_user_model()
+
+
+class CustomTokenSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(source='key')
+
+    class Meta:
+        model = TokenModel
+        fields = ('token',)
 
 
 class CustomLoginSerializer(LoginSerializer):
@@ -83,6 +92,7 @@ class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
         ## User extra data assignation
         user.profile_photo = request.data['profile_photo'] if \
                     'profile_photo' in request.data.keys() else None
+
         user.country = self.cleaned_data['country']
 
         user.save()

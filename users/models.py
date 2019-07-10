@@ -2,7 +2,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_countries.fields import CountryField
+from django.utils import timezone
 
+
+class AutoDateTimeField(models.DateTimeField):
+    def pre_save(self, model_instance, add):
+        return timezone.now()
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_URL/user_<id>/<filename>
@@ -14,6 +19,8 @@ class CustomUser(AbstractUser):
     profile_photo = models.ImageField(
         upload_to=user_directory_path, blank=True, null=True)
     country = CountryField(blank_label='(select country)', null=True)
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

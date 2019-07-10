@@ -71,14 +71,10 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('127.0.0.1', 6379), ('projexbackend.herokuapp.com', 6379)],
         },
     },
 }
-
-# PUSH_NOTIFICATIONS_SETTINGS = {
-#     "FCM_API_KEY": "AIzaSyBvXHAMcynDo0biuZCaF2h8SglMSdeCyj4"
-# }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -185,8 +181,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
     ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 
@@ -214,7 +210,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 REST_AUTH_SERIALIZERS = {
-    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer"
+    "LOGIN_SERIALIZER": "users.serializers.CustomLoginSerializer",
+    'TOKEN_SERIALIZER': 'users.serializers.CustomTokenSerializer',
+
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
