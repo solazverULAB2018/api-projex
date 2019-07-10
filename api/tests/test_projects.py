@@ -42,9 +42,10 @@ class ProjectTestCase(AuthBaseTestCase):
         response = self.client.get(self.url)
         print(response.status_code, response.content)
         self.assertEqual(200, response.status_code)
-        response_data = json.loads(response.content)
-        pSerial = ProjectSerializer(instance=self.project)
-        self.assertEqual(pSerial.data, response_data['results'][0])
+        response_data = json.loads(response.content)['results']
+        project = Project.objects.get(title="black mesa")
+        projectSerial = ProjectSerializer(instance=project)
+        self.assertEqual(projectSerial.data, response_data[0])
 
 
     def test_read_project_get_by_another_user(self):

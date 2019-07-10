@@ -26,7 +26,7 @@ class UserLoginAPIViewTestCase(APITestCase):
         response = self.client.post(self.url%'login', data)
         print(response.status_code, response.content)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("key" in json.loads(response.content))
+        self.assertTrue("token" in json.loads(response.content))
 
     def test_authentication_with_valid_username(self):
         """
@@ -51,7 +51,7 @@ class UserLoginAPIViewTestCase(APITestCase):
         response = self.client.post(self.url%'login', data)
         print(response.status_code, response.content)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("key" in json.loads(response.content))
+        self.assertTrue("token" in json.loads(response.content))
 
     def test_login_logout(self):
         """
@@ -64,7 +64,7 @@ class UserLoginAPIViewTestCase(APITestCase):
         response = self.client.post(self.url%'login', data)
         print(response.status_code, response.content)
         self.assertEqual(200, response.status_code)
-        self.assertTrue("key" in json.loads(response.content))
+        self.assertTrue("token" in json.loads(response.content))
 
         response = self.client.get(self.url%'logout')
         self.assertEqual(200, response.status_code)

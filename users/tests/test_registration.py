@@ -81,7 +81,7 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         response = self.client.post(self.url, data, format='json')
         print(response.status_code, response.content)
         self.assertEqual(201, response.status_code)
-        self.assertTrue("key" in json.loads(response.content))
+        self.assertTrue("token" in json.loads(response.content))
 
     #@patch('django.core.files.storage.FileSystemStorage.save')
     def test_user_registration_with_photo(self):#, mock_save):
@@ -100,7 +100,7 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         response = self.client.post(self.url, data, format='json')
         print(response.status_code, response.content)
         self.assertEqual(201, response.status_code)
-        self.assertTrue("key" in json.loads(response.content))
+        self.assertTrue("token" in json.loads(response.content))
 
     def test_unique_username_validation(self):
         """
