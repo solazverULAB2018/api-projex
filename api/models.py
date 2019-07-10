@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import datetime
-from users.models import CustomUser
+from users.models import CustomUser, AutoDateTimeField
+from django.utils import timezone
 
 # Create your models here.
 
@@ -22,6 +23,8 @@ class Preferences(models.Model):
     language = models.CharField(max_length=2)
     color_schema = models.CharField(max_length=1)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.language
@@ -36,6 +39,8 @@ class Project(models.Model):
         upload_to=project_directory_path, blank=True)
     creator = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="project_creator")
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
     assignee = models.ManyToManyField(
         CustomUser,
         through='UserProject'
@@ -55,6 +60,9 @@ class Task(models.Model):
         CustomUser,
         through='Assignee'
     )
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
 
 # Assignee(user_id,  task_id)
 
@@ -64,6 +72,9 @@ class Assignee(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name="user_to_task")
     task = models.ForeignKey(
         'Task', on_delete=models.CASCADE, related_name="task_to_user")
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
 
 # Board(id, title, project_id)
 
@@ -71,6 +82,8 @@ class Assignee(models.Model):
 class Board(models.Model):
     title = models.CharField(max_length=10)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
 
 # Comment(id, text, task_id, creator_id)
 
@@ -79,6 +92,9 @@ class Comment(models.Model):
     text = models.TextField()
     task = models.ForeignKey('Task', on_delete=models.CASCADE)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
 
 # Notification(id, type, text, notifier_id)
 
@@ -91,6 +107,8 @@ class Notification(models.Model):
         through='UserNotification',
         through_fields=('notification', 'user')
     )
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
 
 # UserProject(user_id, project_id, status, role)
 
@@ -102,6 +120,9 @@ class UserProject(models.Model):
         'Project', on_delete=models.CASCADE, related_name="project_to_user")
     role = models.CharField(max_length=30)
     status = models.CharField(max_length=10)
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
 
 # UserNotification(user_id, notification_id)
 
@@ -111,3 +132,5 @@ class UserNotification(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name="user_to_notification")
     notification = models.ForeignKey(
         'Notification', on_delete=models.CASCADE, related_name="notification_to_user")
+    created_at = models.DateField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)

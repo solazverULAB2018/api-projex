@@ -6,13 +6,16 @@ import pdb
 
 ######################### FILTERS #############################################
 
+
 class UserFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     """
     Queryset filter for current user
     """
+
     def get_queryset(self):
         request = self.context.get('request', None)
-        queryset = super(UserFilteredPrimaryKeyRelatedField, self).get_queryset()
+        queryset = super(UserFilteredPrimaryKeyRelatedField,
+                         self).get_queryset()
         if not request or not queryset:
             return None
         return queryset.filter(user=request.user)
@@ -22,9 +25,11 @@ class UserFilteredByProjectPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedF
     """
     Queryset filter for current project
     """
+
     def get_queryset(self):
         request = self.context.get('request', None)
-        queryset = super(UserFilteredByProjectPrimaryKeyRelatedField, self).get_queryset()
+        queryset = super(
+            UserFilteredByProjectPrimaryKeyRelatedField, self).get_queryset()
         if not request or not queryset:
             return None
         return queryset.filter(project=request.data.project)
@@ -44,6 +49,7 @@ class UserProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProject
         fields = ('id', 'user', 'project', 'role', 'status')
+
 
 class AssigneeSerializer(serializers.ModelSerializer):
     """
@@ -70,6 +76,7 @@ class BoardSerializer(serializers.ModelSerializer):
         model = Board
         fields = ('id', 'title', 'project')
 
+
 class TaskSerializer(serializers.ModelSerializer):
     """
     Each task created for a project
@@ -81,7 +88,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ('id', 'title', 'description', 'due_date', 'priority', 'task_file',
-        'board', 'task_to_user')
+                  'board', 'task_to_user')
 
     def create(self, validated_data):
         try:
@@ -93,6 +100,7 @@ class TaskSerializer(serializers.ModelSerializer):
             UserProject.objects.create(task=task, **data)
         return task
 
+
 class CommentSerializer(serializers.ModelSerializer):
     """
     Comments shown in task edit menu
@@ -103,8 +111,9 @@ class CommentSerializer(serializers.ModelSerializer):
         queryset=Task.objects.all())
 
     class Meta:
-        model=Comment
+        model = Comment
         fields = ('id', 'text', 'task', 'creator')
+
 
 class ProjectSerializer(serializers.ModelSerializer):
     """
@@ -118,7 +127,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('id', 'title', 'description',
-                  'project_photo', 'creator', 'project_to_user')
+                  'project_photo', 'creator', 'project_to_user', 'updated_at')
+        read_only_fields = ('updated_at',)
 
     def create(self, validated_data):
         try:
@@ -130,6 +140,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         for data in users_data:
             UserProject.objects.create(project=project, **data)
         return project
+
 
 class PreferencesSerializer(serializers.ModelSerializer):
     """
@@ -144,14 +155,14 @@ class PreferencesSerializer(serializers.ModelSerializer):
 
     ######## TODO UPDATE USING PROJECT VIEW ##############
 
-
     # def update(self, instance, validated_data):
     #     users_data = validated_data.pop('project_to_user')
     #     assignee_data = UserProject.objects.get(project=instance)
     #     instance.update(**validated_data)
     #     for data in assignee_data:
     #         data.create_or_update(**users_data)
-            
+
+
 class NotificationSerializer(serializers.ModelSerializer):
     """
     Notifications serializer
