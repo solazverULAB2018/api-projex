@@ -3,18 +3,17 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import datetime
 from users.models import CustomUser, AutoDateTimeField
 from django.utils import timezone
-
 # Create your models here.
 
 
 def project_directory_path(instance, filename):
     # file will be uploaded to MEDIA_URL/project_<id>/
-    return 'project_{0}/{1}'.format(instance.id, filename)
+    return 'project_{0}/{1}'.format(str(instance.title), filename)
 
 
 def tasks_directory_path(instance, filename):
     # file will be uploaded to MEDIA_URL/task_<id>/
-    return 'task_{0}/{1}'.format(instance.id, filename)
+    return 'task_{0}/{1}'.format(instance.title, filename)
 
 # Preferences (user_id, language, color_schema)
 
