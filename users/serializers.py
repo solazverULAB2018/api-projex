@@ -78,7 +78,7 @@ class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
             'password1': self.validated_data.get('password1', ''),
             'email': self.validated_data.get('email', ''),
             'username': self.validated_data.get('username', ''),
-            'profile_photo': self.validated_data.get('profile_photo', ''),
+            'profile_photo': self.validated_data.get('profile_photo', None),
             'country': self.validated_data.get('country', '')
         }
 
@@ -89,11 +89,9 @@ class CustomRegisterSerializer(CountryFieldMixin, RegisterSerializer):
         adapter.save_user(request, user, self)
         setup_user_email(request, user, [])
 
-        # User extra data
-        try:
-            user.profile_photo = request.data['profile_photo']
-        except KeyError as k:
-            pass
+        ## User extra data assignation
+        user.profile_photo = request.data['profile_photo'] if \
+                    'profile_photo' in request.data.keys() else None
 
         user.country = self.cleaned_data['country']
 

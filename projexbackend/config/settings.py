@@ -33,25 +33,36 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'corsheaders',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'users',
     'django.contrib.sites',
+
     'allauth',
     'allauth.account',
+    'channels',
+    'corsheaders',
+    'django_countries',
     'rest_auth',
     'rest_auth.registration',
-    'django_countries',
+    'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_swagger',
+
+    'api',
+    'users',
+]
+
+# Use nose to run all tests
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'api' and 'users' apps
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=api,users',
 ]
 
 ASGI_APPLICATION = 'projexbackend.routing.application'
@@ -110,11 +121,11 @@ WSGI_APPLICATION = 'projexbackend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['DJANGO_DB_NAME'],
-        'USER':  os.environ['DJANGO_USERNAME'],
-        'PASSWORD': os.environ['DJANGO_PASSWORD'],
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': os.getenv('DJANGO_DB_HOST', 'localhost'),
+        'PORT': os.getenv('DJANGO_DB_PORT',''),#5432
+        'NAME': os.getenv('DJANGO_DB_NAME'),
+        'USER': os.getenv('DJANGO_USERNAME'),
+        'PASSWORD': os.getenv('DJANGO_PASSWORD'),
     }
 }
 

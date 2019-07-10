@@ -1,7 +1,7 @@
 language: python
   
 python:
-  - "3.5.2"
+  - "3.6"
 
 services:
   - redis-server
@@ -9,11 +9,12 @@ addons:
   postgresql: "9.6"
 env:
   - DJANGO_VERSION=2.1.7
-  
+
 before_install:
   - export DJANGO_DB_NAME=travis_ci_test
   - export DJANGO_USERNAME=postgres
   - export DJANGO_PASSWORD=''
+  - export SECRET_KEY=7uz9h6wsq
 install:
   - pip install -r requirements.txt
 
@@ -22,7 +23,7 @@ before_script:
 
 script:
   - python manage.py migrate
-  - coverage run manage.py test
+  - python manage.py test -v 2
 
 after_success:
   - coveralls

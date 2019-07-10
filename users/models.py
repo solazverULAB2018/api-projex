@@ -17,7 +17,7 @@ def user_directory_path(instance, filename):
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
     profile_photo = models.ImageField(
-        upload_to=user_directory_path, blank=True)
+        upload_to=user_directory_path, blank=True, null=True)
     country = CountryField(blank_label='(select country)', null=True)
     created_at = models.DateField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)

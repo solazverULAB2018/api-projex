@@ -56,6 +56,14 @@ docs/_build/
 # PyBuilder
 target/
 
-# Images
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
+# Images
 media/
