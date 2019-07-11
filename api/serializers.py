@@ -138,7 +138,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         request = self.context['request']
 
 
-        print(request.data['project_photo'])
+   #     print(request.data['project_photo'])
 
         try:
  #          validated_data['project_to_user'] = json.loads(

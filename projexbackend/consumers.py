@@ -47,7 +47,7 @@ class NotificationConsumer(JsonWebsocketConsumer):
         the use of channels.auth.AuthMiddlewareStack in routing) is
         allowed to subscribe to the requested object.
         """
-        print(content)
+        #print(content)
         # serializer = self.get_serializer(data=content)
         # if not serializer.is_valid():
         #     return
