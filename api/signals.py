@@ -11,7 +11,7 @@ from channels.layers import get_channel_layer
 
 # 1.- Invitation notification CHECK
 # 2.- Assignment notification CHECK
-# 3.- Comment notification 
+# 3.- Comment notification
 # 4.- Finish notification
 
 def send_notification(user, content):
@@ -78,7 +78,7 @@ def send_invitations(sender, instance, created, **kwargs):
             "role": instance.role
         }
         content = insert_content(payload)
-        send_notification(user, content)
+        # send_notification(user, content)
 
 
 @receiver(post_save, sender=Assignee)
@@ -93,4 +93,4 @@ def send_assignations(sender, instance, created, **kwargs):
             "role": instance.role
         }
         content = insert_content(payload)
-        send_notification(user, content)
+        # send_notification(user, content)
