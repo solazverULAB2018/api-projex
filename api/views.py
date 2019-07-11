@@ -29,7 +29,7 @@ class AssigneeViewSet(viewsets.ModelViewSet):
         try:
             task = Task.objects.get(pk=task_id)
         except:
-            return []
+            return Assignee.objects.none()
         return Assignee.objects.filter(task=task)
 
 
@@ -46,8 +46,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         projects = Project.objects.filter(creator=user)
         memberships = UserProject.objects.filter(user=user)
         for instance in memberships:
-            project = instance.get('project')
-            projects.append(Project.objects.get(pk=project.id))
+            project = instance.project
+            try:
+                projects |= Project.objects.get(pk=project.id)
+            except:
+                pass
+
         return projects
 
 
@@ -64,7 +68,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         try:
             board = Board.objects.get(pk=board_id)
         except:
-            return []
+            return Task.objects.none()
 
         return Task.objects.filter(board=board)
 
@@ -82,7 +86,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         try:
             task = Task.objects.get(pk=task_id)
         except:
-            return []
+            return Comment.objects.none()
 
         return Comment.objects.filter(task=task)
 
@@ -100,7 +104,7 @@ class BoardViewSet(viewsets.ModelViewSet):
         try:
             project = Project.objects.get(pk=project_id)
         except:
-            return []
+            return Board.objects.none()
 
         return Board.objects.filter(project=project)
 
@@ -133,4 +137,4 @@ class NotificationViewSet(viewsets.ModelViewSet):
         for notif in user_notifications:
             notifications.append(
                 Notification.objects.get(id=notif.notification.id))
-        return user_notifications
+        return notifications

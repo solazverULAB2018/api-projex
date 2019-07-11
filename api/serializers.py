@@ -3,6 +3,8 @@ from users.models import CustomUser
 from api.models import *
 from users.serializers import UserSerializer
 import pdb
+import json
+from django.db import transaction, Error
 
 ######################### FILTERS #############################################
 
@@ -96,8 +98,8 @@ class TaskSerializer(serializers.ModelSerializer):
         except KeyError as k:
             users_data = {}
         task = Task.objects.create(**validated_data)
-        for data in users_data:
-            Assignee.objects.create(task=task, **data)
+        #for data in users_data:
+        #    Assignee.objects.create(task=task, **data)
         return task
 
 
@@ -131,14 +133,37 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ('updated_at',)
 
     def create(self, validated_data):
+
+        request = self.context['request']
+
+
+   #     print(request.data['project_photo'])
+
         try:
-            users_data = validated_data.pop('project_to_user')
+ #          validated_data['project_to_user'] = json.loads(
+ #          request.data['project_to_user'])
+            validated_data['project_photo'] = request.data['project_photo']
         except KeyError as k:
             users_data = {}
 
+  #      users_data = validated_data.pop('project_to_user')
         project = Project.objects.create(**validated_data)
-        for data in users_data:
-            UserProject.objects.create(project=project, **data)
+
+        # UserProject.objects.bulk_create([
+        #     UserProject.objects.create(project=project, user=CustomUser(id=data.pop('user')), **data) for data in users_data
+        # ])
+
+        # for data in users_data:
+        #     user = CustomUser.objects.get(pk=data.pop('user'))
+        #     data['user'] = user
+        #     data['project'] = project
+
+        # print(*users_data, sep=', ')
+
+        # for data in users_data:
+        #     aux = UserProject(**data)
+        #     aux.save()
+
         return project
 
 
