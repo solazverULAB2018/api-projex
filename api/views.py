@@ -26,10 +26,14 @@ class AssigneeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         task_id = self.request.query_params.get('task')
-        try:
-            task = Task.objects.get(pk=task_id)
-        except:
-            return Assignee.objects.none()
+        if task_id is not None:
+            try:
+                task = Task.objects.get(pk=task_id)
+            except:
+                return Assignee.objects.none()
+        else:
+            return Assignee.objects.all()
+
         return Assignee.objects.filter(task=task)
 
 
@@ -65,10 +69,13 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         board_id = self.request.query_params.get('board')
-        try:
-            board = Board.objects.get(pk=board_id)
-        except:
-            return Task.objects.none()
+        if(board_id is not None):
+            try:
+                board = Board.objects.get(pk=board_id)
+            except:
+                return Task.objects.none()
+        else:
+            return Task.objects.all()
 
         return Task.objects.filter(board=board)
 
@@ -83,10 +90,13 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         task_id = self.request.query_params.get('task')
-        try:
-            task = Task.objects.get(pk=task_id)
-        except:
-            return Comment.objects.none()
+        if task_id is not None:
+            try:
+                task = Task.objects.get(pk=task_id)
+            except:
+                return Comment.objects.none()
+        else:
+            return Comment.objects.all()
 
         return Comment.objects.filter(task=task)
 

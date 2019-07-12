@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from users.models import CustomUser
-from api.models import Board, Project, Comment, Assignee, Preferences, UserProject, Notification, UserNotification
+from api.models import *
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
@@ -73,7 +73,7 @@ def send_invitations(sender, instance, created, **kwargs):
         user = instance.user
         create_notification("project", user, instance)
         payload = {
-            "project": instance.project.id,
+            "project": instance.project,
             "notifier_type": "project",
             "role": instance.role
         }
@@ -88,9 +88,8 @@ def send_assignations(sender, instance, created, **kwargs):
         user = instance.user
         create_notification("assignation", user, instance)
         payload = {
-            "project": instance.project.id,
-            "notifier_type": "project",
-            "role": instance.role
+            "task": instance.task,
+            "notifier_type": "assignation",
         }
         content = insert_content(payload)
         # send_notification(user, content)
