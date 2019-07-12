@@ -86,9 +86,13 @@ def send_assignations(sender, instance, created, **kwargs):
 
     if created:
         user = instance.user
+        project = instance.task.board.project
+        userProject = UserProject.objects.get(user=user, project=project)
         create_notification("assignation", user, instance)
         payload = {
-            "task": instance.task,
+            "project": project.id,
+            "role": userProject.role,
+            "task": instance.task.id,
             "notifier_type": "assignation",
         }
         content = insert_content(payload)
