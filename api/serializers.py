@@ -5,6 +5,7 @@ from users.serializers import UserSerializer
 import pdb
 import json
 from django.db import transaction, Error
+import datetime
 
 ######################### FILTERS #############################################
 
@@ -86,24 +87,29 @@ class TaskSerializer(serializers.ModelSerializer):
     board = serializers.PrimaryKeyRelatedField(
         queryset=Board.objects.all())
     task_to_user = AssigneeSerializer(many=True, required=False)
-    due_date = serializers.DateField()
 
     class Meta:
         model = Task
         fields = ('id', 'title', 'description', 'due_date', 'priority', 'task_file',
-                  'board', 'task_to_user', 'created_at',)
-        read_only_fields = ('created_at',)
+                  'board', 'task_to_user',)
+
+    def validate_due_date(self, due_date):
+        return due_date
 
     def create(self, validated_data):
         try:
             users_data = validated_data.pop('task_to_user')
         except KeyError as k:
             users_data = {}
+
+     #   validated_data['due_date'] = validated_data['due_date'].strftime('%Y-%m-%d')
+     #   a = validated_data['due_date'].strftime('%Y-%m-%d')
+
         task = Task.objects.create(**validated_data)
 
         for data in users_data:
-            user = CustomUser.objects.get(pk=data)
-            Assignee.objects.create(task=task, **data)
+            user = CustomUser.objects.get(pk=data.pop("user").id)
+            Assignee.objects.create(task=task, user=user, **data)
 
         return task
 
