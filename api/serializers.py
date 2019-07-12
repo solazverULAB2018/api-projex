@@ -93,6 +93,9 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'description', 'due_date', 'priority', 'task_file',
                   'board', 'task_to_user',)
 
+    def validate_due_date(self, due_date):
+        return due_date
+
     def create(self, validated_data):
         try:
             users_data = validated_data.pop('task_to_user')
