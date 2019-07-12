@@ -86,11 +86,13 @@ class TaskSerializer(serializers.ModelSerializer):
     board = serializers.PrimaryKeyRelatedField(
         queryset=Board.objects.all())
     task_to_user = AssigneeSerializer(many=True, required=False)
+    due_date = serializers.DateField()
 
     class Meta:
         model = Task
         fields = ('id', 'title', 'description', 'due_date', 'priority', 'task_file',
-                  'board', 'task_to_user')
+                  'board', 'task_to_user', 'created_at',)
+        read_only_fields = ('created_at',)
 
     def create(self, validated_data):
         try:
@@ -98,8 +100,11 @@ class TaskSerializer(serializers.ModelSerializer):
         except KeyError as k:
             users_data = {}
         task = Task.objects.create(**validated_data)
-        #for data in users_data:
-        #    Assignee.objects.create(task=task, **data)
+
+        for data in users_data:
+            user = CustomUser.objects.get(pk=data)
+            Assignee.objects.create(task=task, **data)
+
         return task
 
 
@@ -135,13 +140,11 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         request = self.context['request']
-
-
    #     print(request.data['project_photo'])
 
         try:
- #          validated_data['project_to_user'] = json.loads(
- #          request.data['project_to_user'])
+         #          validated_data['project_to_user'] = json.loads(
+         #          request.data['project_to_user'])
             validated_data['project_photo'] = request.data['project_photo']
         except KeyError as k:
             users_data = {}
