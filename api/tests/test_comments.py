@@ -39,8 +39,9 @@ class BoardTestCase(AuthBaseTestCase):
           "text": "This task is very important",
         }
         self.comment = Comment.objects.create(**self.data)
+        self.data['creator'] = self.jefe.id
         self.data['task'] = self.task.id
-        self.data['jefe'] = self.jefe.id
+
 
     def test_read_comments_get(self):
         """
@@ -55,3 +56,21 @@ class BoardTestCase(AuthBaseTestCase):
         commentSerial = CommentSerializer(instance=self.comment)
         print(commentSerial.data)
         self.assertEqual(commentSerial.data, response_data['results'][0])
+
+
+    def test_create_task_post(self):
+        """
+        Test to verify POST task valid 
+        """
+        self.data['text'] = "Keep deadline"
+        response = self.client.post(self.url, self.data)
+        print(response.status_code, response.content)
+        self.assertEqual(201, response.status_code)
+
+        url = self.url + '?task={id}'.format(id=self.task.id)
+        response = self.client.get(url)
+        print(response.status_code, response.content)
+        self.assertEqual(200, response.status_code)
+        response_data = json.loads(response.content)
+        self.assertEqual(2, response_data['count']) # 2 comments
+
