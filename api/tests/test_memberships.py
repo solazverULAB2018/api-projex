@@ -35,23 +35,43 @@ class ProjectTestCase(AuthBaseTestCase):
           "role": "Backend",
           "status": "active",
         }
+        self.emp1Proj = UserProject.objects.create(**self.data)
 
 
     def test_read_membership_get(self):
         """
         Test to verify GET membership valid (Model and Serializer)
         """
-        data = self.data.copy()
-        emp1Proj = UserProject.objects.create(**data)
-        data['user'] = self.emp2
-        data['role'] = 'Frontend'
-        emp2Proj = UserProject.objects.create(**data)
-
         response = self.client.get(self.url)
         print(response.status_code, response.content)
         self.assertEqual(200, response.status_code)
         response_data = json.loads(response.content)['results']
         print(response_data)
-        emp1ProjSerial = UserProjectSerializer(instance=emp1Proj)
+        emp1ProjSerial = UserProjectSerializer(instance=self.emp1Proj)
         print(emp1ProjSerial.data)
         self.assertEqual(emp1ProjSerial.data, response_data[0])
+
+
+    def test_create_membership_post(self):
+        """
+        Test to verify POST membership valid 
+        """
+        self.data['project'] = self.project.id
+        self.data['user'] = self.emp2.id
+        self.data['role'] = 'Frontend'
+
+        response = self.client.post(self.url, self.data)
+        print(response.status_code, response.content)
+        self.assertEqual(201, response.status_code)
+
+        self.client.logout() # Logout emp1
+        self.client.login(username='emp2', password=self.password)
+        response = self.client.get(self.url)
+        print(response.status_code, response.content)
+        self.assertEqual(200, response.status_code)
+        response_data = json.loads(response.content)['results']
+        print(response_data)
+        emp2Proj = UserProject.objects.get(user=self.emp2.id)
+        emp2ProjSerial = UserProjectSerializer(instance=emp2Proj)
+        print(emp2ProjSerial.data)
+        self.assertEqual(emp2ProjSerial.data, response_data[0])
