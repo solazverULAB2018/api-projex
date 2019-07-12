@@ -87,13 +87,11 @@ class TaskSerializer(serializers.ModelSerializer):
     board = serializers.PrimaryKeyRelatedField(
         queryset=Board.objects.all())
     task_to_user = AssigneeSerializer(many=True, required=False)
-    due_date = serializers.DateField(format="%Y-%m-%d")
 
     class Meta:
         model = Task
         fields = ('id', 'title', 'description', 'due_date', 'priority', 'task_file',
-                  'board', 'task_to_user', 'created_at',)
-        read_only_fields = ('created_at',)
+                  'board', 'task_to_user',)
 
     def create(self, validated_data):
         try:
@@ -102,14 +100,13 @@ class TaskSerializer(serializers.ModelSerializer):
             users_data = {}
 
      #   validated_data['due_date'] = validated_data['due_date'].strftime('%Y-%m-%d')
-        a = validated_data['due_date'].strftime('%Y-%m-%d')
+     #   a = validated_data['due_date'].strftime('%Y-%m-%d')
 
-        print(type(a))
         task = Task.objects.create(**validated_data)
 
-        # for data in users_data:
-        #     user = CustomUser.objects.get(pk=data.pop("user").id)
-        #     Assignee.objects.create(task=task, user=user, **data)
+        for data in users_data:
+            user = CustomUser.objects.get(pk=data.pop("user").id)
+            Assignee.objects.create(task=task, user=user, **data)
 
         return task
 
