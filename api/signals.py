@@ -91,8 +91,8 @@ def send_assignations(sender, instance, created, **kwargs):
         create_notification("assignation", user, instance)
         payload = {
             "project": project.id,
-            "role": userProject.role
-            "task": instance.task,
+            "role": userProject.role,
+            "task": instance.task.id,
             "notifier_type": "assignation",
         }
         content = insert_content(payload)
