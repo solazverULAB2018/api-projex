@@ -67,11 +67,11 @@ NOSE_ARGS = [
 
 ASGI_APPLICATION = 'projexbackend.routing.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
+#     },
+# }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

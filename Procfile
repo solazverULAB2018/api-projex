@@ -1,1 +1,1 @@
-web: daphne projexbackend.asgi:channel_layer --port $PORT --bind 0.0.0.0 -v2
+web: daphne projexbackend.asgi:application --port $PORT --bind 0.0.0.0 -v2
