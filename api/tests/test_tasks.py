@@ -13,14 +13,14 @@ class TaskTestCase(AuthBaseTestCase):
     url = '/api/v1/tasks'
 
     def setUp(self):
-        super().setUp() # Authenticanting
+        super().setUp() # Create 4 users(user,jefe,emp1,emp2) and Login jefe
         self.data_project = {
           "title": "black mesa",
           "description": "particle accelerator",
           "creator": self.jefe,
         }
         self.project = Project.objects.create(**self.data_project)
-        self.boards = Board.objects.all()
+        self.boards = Board.objects.filter(project=self.project.id)
         self.board = self.boards[0]
         print(self.boards)
         print(self.board)
@@ -28,7 +28,7 @@ class TaskTestCase(AuthBaseTestCase):
           "title": "task 1",
           "description": "first task",
           "priority": 1,
-          "due_date": "2019-11-11",
+          "due_date": "2019-07-27",
           "board": self.board,
         }
         self.task = Task.objects.create(**self.data)
@@ -39,7 +39,6 @@ class TaskTestCase(AuthBaseTestCase):
         """
         Test to verify GET task valid (Model and Serializer)
         """
-        print('before get')
         url = self.url + '?board={id}'.format(id=self.board.id)
         response = self.client.get(url)
         print(response.status_code, response.content)
