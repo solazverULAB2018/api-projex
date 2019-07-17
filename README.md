@@ -45,3 +45,10 @@ Application Programming Interface built under Django Rest Framework. It's used i
 4. Install all required packages using `make freeze`.
 5. Run migrations using `python manage.py migrate`.
 6. Start app using `python manage.py runserver`.
+
+### Run alongside ProjeX app in development mode
+
+1. Open this url in your browser when your server is running `127.0.0.1/api/v1/rest-auth/registration`.
+2. Create a user with the following credentials: `username: admin`, `email: admin@admin.com` and `password: admin12345`.
+3. Comment  ` 'rest_framework.authentication.SessionAuthentication', ` line from `settings.py`.
+4. Login from your running app.
